@@ -67,6 +67,9 @@ class PlayerListener
                     $player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::error_full_drawer()));
                     return;
                 }
+                if ($count === 0){
+                    return;
+                }
                 $player->getInventory()->removeItem($item->setCount($count));
                 $player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::drawer_add_item($item, $count)));
                 return;

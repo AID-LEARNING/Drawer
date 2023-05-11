@@ -57,7 +57,7 @@ class DrawerTile extends Spawnable
         if ($this->isMaxStock()) return false;
         $total = $this->stock->getCount() + $count;
         if ( $total >= $this->getMaxStock()){
-            $count = $total - $this->getMaxStock();
+            $count = $this->getMaxStock() - $this->getStock()->getCount();
             $total = $this->getMaxStock();
         }
         if ($total === 0) return false;

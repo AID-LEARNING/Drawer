@@ -82,6 +82,9 @@ final class DrawerManager
                     $player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::error_full_drawer()));
                     return;
                 }
+                if ($count === 0){
+                    return;
+                }
                 $player->getInventory()->removeItem($item->setCount($count));
                 $player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::drawer_add_item($item, $count)));
 
@@ -89,7 +92,7 @@ final class DrawerManager
 
         });
         $ui->setTitle($tile->getBlock()->getName());
-        $ui->addInput(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::drawer_count_input()), $count = $tile->getMaxStock() - $tile->getStock()->getCount(), $count, "count");
+        $ui->addInput(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::drawer_count_input()), $count = $tile->getMaxStock() - abs($tile->getStock()->getCount()), $count, "count");
         $player->sendForm($ui);
 
 
