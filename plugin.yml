@@ -1,0 +1,6 @@
+name: Drawer
+main: SenseiTarzan\Drawer\Main
+version: 1.0.0
+api: 5.0.0
+authors:
+  - SenseiTarzan

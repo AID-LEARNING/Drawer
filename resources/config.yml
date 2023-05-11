@@ -1,0 +1,28 @@
+#Drawer EXEMPLE: # You can add as many drawers as you want
+#    id: 10194 # ID of the block in PocketMine-MP
+#    id-legacy: "minecraft:element_116" ID of the block in Minecraft: Bedrock Edition
+#    name: '§6Drawer Iron' # Name of the block
+#    max-stack-on-place: 230 # Max stack on place on drawer
+#    hardness: 1.0 # Hardness of the block
+#    toolType: AXE # PICKAXE, AXE, SHOVEL, SWORD, HOE, SHEARS, NONE # Tool type to break the block
+#    toolHarvestLevel: 2 # Tool harvest level to break the block
+#    blastResistance: 1.0 # Blast resistance of the block
+
+Drawer Wood:
+  id: 10196
+  id-legacy: "minecraft:element_42"
+  name: '§6Drawer Wood'
+  max-stack-on-place: 150
+  hardness: 1.0
+  toolType: AXE # PICKAXE, AXE, SHOVEL, SWORD, HOE, SHEARS, NONE
+  toolHarvestLevel: 2
+  blastResistance: 1.0
+Drawer STONE:
+  id: 10195
+  id-legacy: "minecraft:element_115"
+  name: '§6Drawer Stone'
+  max-stack-on-place: 190
+  hardness: 1.0
+  toolType: AXE # PICKAXE, AXE, SHOVEL, SWORD, HOE, SHEARS, NONE
+  toolHarvestLevel: 2
+  blastResistance: 1.0
