@@ -24,7 +24,4 @@ projects:
         version: ^1.0.2
       - src: Paroxity/Commando/Commando
         version: ^3.0.0
-      - src: AID-LEARNING/InvMenu/InvMenu
-        version: ^4.5.0
-        branch: pm5
 ...
