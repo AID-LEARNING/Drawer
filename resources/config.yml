@@ -1,6 +1,6 @@
 #Drawer EXEMPLE: # You can add as many drawers as you want
 #    id: 10194 # ID of the block in PocketMine-MP
-#    id-legacy: "minecraft:element_116" ID of the block in Minecraft: Bedrock Edition
+#    id-legacy: "minecraft:element_116" ID of the block in Minecraft: Bedrock Edition or your id of block custom
 #    name: '§6Drawer Iron' # Name of the block
 #    max-stack-on-place: 230 # Max stack on place on drawer
 #    hardness: 1.0 # Hardness of the block
