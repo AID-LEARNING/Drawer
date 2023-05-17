@@ -5,6 +5,7 @@ namespace SenseiTarzan\Drawer\Listener;
 use pocketmine\block\BlockTypeIds;
 use pocketmine\event\EventPriority;
 use pocketmine\event\player\PlayerInteractEvent;
+use pocketmine\event\player\PlayerMoveEvent;
 use SenseiTarzan\Drawer\Block\DrawerBlock;
 use SenseiTarzan\Drawer\Component\DrawerManager;
 use SenseiTarzan\Drawer\Tile\DrawerTile;

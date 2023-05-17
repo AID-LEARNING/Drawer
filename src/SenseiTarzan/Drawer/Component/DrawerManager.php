@@ -57,7 +57,7 @@ final class DrawerManager
             $checkTiles = $tile->getPosition()->getWorld()->getTile($tile->getPosition());
             if ($checkTiles instanceof $tile) {
 
-                if (!$tile->hasStock()) {
+                if (!$checkTiles->hasStock()) {
                     $item = clone $player->getInventory()->getItemInHand();
 
                     if ($item->getCount() < $count) {
@@ -68,17 +68,17 @@ final class DrawerManager
                         return;
                     }
                     $item->setCount($count);
-                    $tile->setStock($item);
+                    $checkTiles->setStock($item);
                     $player->getInventory()->removeItem($item);
                     return;
                 }
-                $item = clone $tile->getStock();
+                $item = clone $checkTiles->getStock();
                 $item->setCount($count);
                 if (!$player->getInventory()->contains($item)) {
                     $player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::error_no_contains_item($item)));
                     return;
                 }
-                if (!$tile->addStock($count)) {
+                if (!$checkTiles->addStock($count)) {
                     $player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::error_full_drawer()));
                     return;
                 }
@@ -109,8 +109,8 @@ final class DrawerManager
             }
             $checkTiles = $tile->getPosition()->getWorld()->getTile($tile->getPosition());
             if ($checkTiles instanceof $tile) {
-                if ($tile->hasStock()) {
-                    if ($item = $tile->removeStock($count)) {
+                if ($checkTiles->hasStock()) {
+                    if ($item = $checkTiles->removeStock($count)) {
                         $player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::drawer_remove_item($item, $count)));
                         $player->getInventory()->addItem($item);
                     }

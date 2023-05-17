@@ -24,4 +24,6 @@ projects:
         version: ^1.0.2
       - src: Paroxity/Commando/Commando
         version: ^3.0.0
+      - src: AID-LEARNING/LibHackBlockAndItemRegistry/LibHackBlockAndItemRegistry
+        version: ^1.0.0
 ...
