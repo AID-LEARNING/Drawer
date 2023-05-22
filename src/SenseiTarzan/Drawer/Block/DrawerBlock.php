@@ -3,12 +3,16 @@
 namespace SenseiTarzan\Drawer\Block;
 
 use pocketmine\block\Transparent;
+use pocketmine\block\utils\FacesOppositePlacingPlayerTrait;
+use pocketmine\block\utils\HorizontalFacingTrait;
 use pocketmine\item\Item;
 use pocketmine\nbt\tag\CompoundTag;
 use SenseiTarzan\Drawer\Tile\DrawerTile;
-
 final class DrawerBlock extends Transparent
 {
+
+    use FacesOppositePlacingPlayerTrait;
+    use HorizontalFacingTrait;
 
     public function getSilkTouchDrops(Item $item): array
     {

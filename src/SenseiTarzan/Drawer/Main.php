@@ -70,7 +70,8 @@ class Main extends PluginBase
             ));
             $realNameTile = str_replace("Tile", "", ($realNameTile = explode("\\", $tile))[array_key_last($realNameTile)]);
             TileFactory::getInstance()->register($tile, [strtolower("senseitarzan:" . $realNameTile), strtolower($realNameTile)]);
-            HackRegisterBlock::registerBlockAndSerializerAndDeserializer($block, $blockData["id-legacy"], fn() => Writer::create($blockData["id-legacy"]), fn() => $block);
+            $serializer = isset($blockData['serializer']) ? (eval($blockData['serializer']))($block) : Writer::create($blockData["id-legacy"]);
+            HackRegisterBlock::registerBlockAndSerializerAndDeserializer($block, $blockData["id-legacy"], $serializer, fn() => $block);
             CreativeInventory::getInstance()->remove($item = $block->asItem());
             CreativeInventory::getInstance()->add($item);
         }
