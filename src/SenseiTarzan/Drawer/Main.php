@@ -12,6 +12,7 @@ use pocketmine\data\bedrock\block\convert\BlockStateWriter as Writer;
 use pocketmine\inventory\CreativeInventory;
 use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\AsyncTask;
+use ReflectionException;
 use SenseiTarzan\Drawer\Block\DrawerBlock;
 use SenseiTarzan\Drawer\Listener\PlayerListener;
 use SenseiTarzan\ExtraEvent\Component\EventLoader;
@@ -28,7 +29,7 @@ class Main extends PluginBase
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     protected function onEnable(): void
     {
@@ -42,7 +43,7 @@ class Main extends PluginBase
             $blockName = str_replace(" ", "_", strtolower($blockName));
             $maxStockPlace = $blockData["max-stack-on-place"];
             $TileClassName = implode("", array_map(fn($word) => ucfirst($word), explode("_", $blockName))) . "Tile";
-            $tile = eval($instanceTileClass = 'namespace SenseiTarzan\Drawer\Tile;class '.$TileClassName.' extends DrawerTile { public int $maxStock = '.$maxStockPlace.';} return  '.$TileClassName.'::class;');
+            $tile = eval($instanceTileClass = 'namespace SenseiTarzan\Drawer\Tile;class ' . $TileClassName . ' extends DrawerTile { public int $maxStock = ' . $maxStockPlace . ';} return  ' . $TileClassName . '::class;');
 
             $tiles[$blockData["id-legacy"]] = $instanceTileClass;
 
@@ -80,7 +81,9 @@ class Main extends PluginBase
         $asyncPool = $this->getServer()->getAsyncPool();
         $asyncPool->addWorkerStartHook(function (int $worker) use ($asyncPool, $blocks, $tiles): void {
             $asyncPool->submitTaskToWorker(new class($blocks, $tiles) extends AsyncTask {
-                public function __construct(private ThreadedArray $blocks, private ThreadedArray $tiles) {}
+                public function __construct(private ThreadedArray $blocks, private ThreadedArray $tiles)
+                {
+                }
 
                 public function onRun(): void
                 {
@@ -88,10 +91,12 @@ class Main extends PluginBase
                         $tile = eval($tile);
                         $realNameTile = str_replace("Tile", "", ($realNameTile = explode("\\", $tile))[array_key_last($realNameTile)]);
                         TileFactory::getInstance()->register($tile, [strtolower("senseitarzan:" . $realNameTile), strtolower($realNameTile)]);
-                        /** @var DrawerBlock $block */
+                        /**
+                         * @var DrawerBlock $block
+                         * @var string|null $serializer
+                         */
                         [$block, $serializer] = igbinary_unserialize($this->blocks[$blockName]);
-                        HackRegisterBlock::registerBlockAndSerializerAndDeserializer($block, $blockName, $$serializer ? (eval($serializer))($block) : (fn() =>  Writer::create($blockName)), fn() => $block);
-
+                        HackRegisterBlock::registerBlockAndSerializerAndDeserializer($block, $blockName, $serializer ? (eval($serializer))($block) : (fn() => Writer::create($blockName)), fn() => $block);
                     }
                 }
             }, $worker);
