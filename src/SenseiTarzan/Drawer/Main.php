@@ -5,14 +5,13 @@ namespace SenseiTarzan\Drawer;
 use pocketmine\block\BlockBreakInfo;
 use pocketmine\block\BlockIdentifier;
 use pocketmine\block\BlockToolType;
+use pocketmine\block\BlockTypeIds;
 use pocketmine\block\BlockTypeInfo;
-use pocketmine\block\RuntimeBlockStateRegistry;
 use pocketmine\block\tile\TileFactory;
 use pocketmine\data\bedrock\block\convert\BlockStateWriter as Writer;
 use pocketmine\inventory\CreativeInventory;
 use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\AsyncTask;
-use pocketmine\world\format\io\GlobalBlockStateHandlers;
 use SenseiTarzan\Drawer\Block\DrawerBlock;
 use SenseiTarzan\Drawer\Listener\PlayerListener;
 use SenseiTarzan\ExtraEvent\Component\EventLoader;
@@ -39,7 +38,6 @@ class Main extends PluginBase
         $tiles = new ThreadedArray();
         $configAll = $this->getConfig()->getAll();
         foreach ($configAll as $blockName => $blockData) {
-            ${"ff"} = $blockName;
             if (!isset($blockData["id-legacy"])) continue;
             $blockName = str_replace(" ", "_", strtolower($blockName));
             $maxStockPlace = $blockData["max-stack-on-place"];
@@ -51,7 +49,7 @@ class Main extends PluginBase
             $blocks[$blockData["id-legacy"]] = igbinary_serialize([
                 $block = new DrawerBlock(
                     new BlockIdentifier(
-                        $blockData["id"],
+                        $blockData["id"] ?? BlockTypeIds::newId(),
                         $tile
                     ),
                     $blockData["name"],
@@ -74,7 +72,7 @@ class Main extends PluginBase
             ]);
             $realNameTile = str_replace("Tile", "", ($realNameTile = explode("\\", $tile))[array_key_last($realNameTile)]);
             TileFactory::getInstance()->register($tile, [strtolower("senseitarzan:" . $realNameTile), strtolower($realNameTile)]);
-            $serializer = isset($blockData['serializer']) ? (eval($blockData['serializer']))($block) : Writer::create($blockData["id-legacy"]);
+            $serializer = isset($blockData['serializer']) ? (eval($blockData['serializer']))($block) : (fn() => Writer::create($blockData["id-legacy"]));
             HackRegisterBlock::registerBlockAndSerializerAndDeserializer($block, $blockData["id-legacy"], $serializer, fn() => $block);
             CreativeInventory::getInstance()->remove($item = $block->asItem());
             CreativeInventory::getInstance()->add($item);
@@ -92,7 +90,7 @@ class Main extends PluginBase
                         TileFactory::getInstance()->register($tile, [strtolower("senseitarzan:" . $realNameTile), strtolower($realNameTile)]);
                         /** @var DrawerBlock $block */
                         [$block, $serializer] = igbinary_unserialize($this->blocks[$blockName]);
-                        HackRegisterBlock::registerBlockAndSerializerAndDeserializer($block, $blockName, ($serializer ? (eval($serializer))($block) : fn() =>  Writer::create($blockName)), fn() => $block);
+                        HackRegisterBlock::registerBlockAndSerializerAndDeserializer($block, $blockName, $$serializer ? (eval($serializer))($block) : (fn() =>  Writer::create($blockName)), fn() => $block);
 
                     }
                 }
