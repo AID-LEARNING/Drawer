@@ -47,27 +47,31 @@ class Main extends PluginBase
             $tile = eval($instanceTileClass = 'namespace SenseiTarzan\Drawer\Tile;class '.$TileClassName.' extends DrawerTile { public int $maxStock = '.$maxStockPlace.';} return  '.$TileClassName.'::class;');
 
             $tiles[$blockData["id-legacy"]] = $instanceTileClass;
-            $blocks[$blockData["id-legacy"]] = igbinary_serialize($block = new DrawerBlock(
-                new BlockIdentifier(
-                    $blockData["id"],
-                    $tile
+
+            $blocks[$blockData["id-legacy"]] = igbinary_serialize([
+                $block = new DrawerBlock(
+                    new BlockIdentifier(
+                        $blockData["id"],
+                        $tile
+                    ),
+                    $blockData["name"],
+                    new BlockTypeInfo(
+                        new BlockBreakInfo(
+                            $blockData["hardness"],
+                            match (strtoupper(($blockData["toolType"] ?? "pickaxe"))) {
+                                "PICKAXE" => BlockToolType::PICKAXE,
+                                "SHOVEL" => BlockToolType::SHOVEL,
+                                "AXE" => BlockToolType::AXE,
+                                "SHEARS" => BlockToolType::SHEARS,
+                                "SWORD" => BlockToolType::SWORD,
+                                default => BlockToolType::NONE
+                            },
+                            $blockData["toolHarvestLevel"],
+                            $blockData["blastResistance"])
+                    )
                 ),
-                $blockData["name"],
-                new BlockTypeInfo(
-                    new BlockBreakInfo(
-                        $blockData["hardness"],
-                        match (strtoupper(($blockData["toolType"] ?? "pickaxe"))) {
-                            "PICKAXE" => BlockToolType::PICKAXE,
-                            "SHOVEL" => BlockToolType::SHOVEL,
-                            "AXE" => BlockToolType::AXE,
-                            "SHEARS" => BlockToolType::SHEARS,
-                            "SWORD" => BlockToolType::SWORD,
-                            default => BlockToolType::NONE
-                        },
-                        $blockData["toolHarvestLevel"],
-                        $blockData["blastResistance"])
-                )
-            ));
+                $blockData['serializer'] ?? null
+            ]);
             $realNameTile = str_replace("Tile", "", ($realNameTile = explode("\\", $tile))[array_key_last($realNameTile)]);
             TileFactory::getInstance()->register($tile, [strtolower("senseitarzan:" . $realNameTile), strtolower($realNameTile)]);
             $serializer = isset($blockData['serializer']) ? (eval($blockData['serializer']))($block) : Writer::create($blockData["id-legacy"]);
@@ -87,7 +91,8 @@ class Main extends PluginBase
                         $realNameTile = str_replace("Tile", "", ($realNameTile = explode("\\", $tile))[array_key_last($realNameTile)]);
                         TileFactory::getInstance()->register($tile, [strtolower("senseitarzan:" . $realNameTile), strtolower($realNameTile)]);
                         /** @var DrawerBlock $block */
-                        HackRegisterBlock::registerBlockAndSerializerAndDeserializer($block = igbinary_unserialize($this->blocks[$blockName]), $blockName, fn() => Writer::create($blockName), fn() => $block);
+                        [$block, $serializer] = igbinary_unserialize($this->blocks[$blockName]);
+                        HackRegisterBlock::registerBlockAndSerializerAndDeserializer($block, $blockName, ($serializer ? (eval($serializer))($block) : fn() =>  Writer::create($blockName)), fn() => $block);
 
                     }
                 }
