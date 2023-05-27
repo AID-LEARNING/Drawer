@@ -99,7 +99,7 @@ class Main extends PluginBase
                          * @var string|null $deserializer
                          */
                         [$block, $serializer, $deserializer] = igbinary_unserialize($this->blocks[$blockName]);
-                        HackRegisterBlock::registerBlockAndSerializerAndDeserializer($block, $blockName, $serializer ? (eval($serializer))($blockName, clone $block) : (fn() => Writer::create($blockName)), $deserializer ? (eval($deserializer))(clone $block) : (fn() => clone $block));
+                        HackRegisterBlock::registerBlockAndSerializerAndDeserializer($block, $blockName, $serializer ? (eval($serializer))($blockName) : (fn() => Writer::create($blockName)), $deserializer ? (eval($deserializer))(clone $block) : (fn() => clone $block));
                     }
                 }
             }, $worker);
